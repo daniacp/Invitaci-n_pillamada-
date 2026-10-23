@@ -11,10 +11,12 @@
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
 body{font-family:var(--serif);color:var(--ink);background:linear-gradient(160deg,#f9d3dc,#f3b9c8 55%,#f9d3dc);font-size:19px}
-.deck{display:flex;height:100dvh;max-width:430px;overscroll-behavior-x:contain;margin:0 auto;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;background:linear-gradient(180deg,#fbd5de,#fdebea);box-shadow:0 0 60px rgba(150,60,90,.25)}
+.deck{display:flex;height:100dvh;max-width:430px;overscroll-behavior-x:contain;margin:0 auto;overflow-x:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;background:linear-gradient(180deg,#fbd5de,#fdebea);box-shadow:0 0 60px rgba(150,60,90,.25)}
 .deck::-webkit-scrollbar{display:none}
 .panel{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;padding:max(22px,env(safe-area-inset-top)) 22px max(56px,env(safe-area-inset-bottom));position:relative}
 .sp{position:absolute;color:var(--gold);font-size:18px;pointer-events:none}
+#p0{touch-action:pan-y}
+  
 h1,h2{font-family:var(--script);font-weight:400;color:var(--rose);text-align:center;line-height:1.05}
 .dots{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:0;right:0;display:flex;gap:9px;justify-content:center;align-items:center;z-index:5;pointer-events:none}
 .dots button{pointer-events:auto;width:34px;height:34px;border:none;border-radius:50%;background:rgba(255,255,255,.8);color:var(--rose);font-size:24px;line-height:1;padding:0 0 3px;box-shadow:0 2px 6px rgba(170,70,100,.25)}
@@ -209,6 +211,12 @@ deck.addEventListener("scroll", function(){
 
 var chosen = [], box = document.getElementById("movies"), count = document.getElementById("count");
 PELIS.forEach(function(m){
+  var x0 = null, cover = document.getElementById("p0");
+cover.addEventListener("pointerdown", function(e){ x0 = e.clientX; });
+cover.addEventListener("pointerup", function(e){
+  if (x0 !== null && x0 - e.clientX > 40) go(1);
+  x0 = null;
+});
   var b = document.createElement("button");
   b.type = "button"; b.className = "mv"; b.setAttribute("aria-pressed", "false");
   var ps = document.createElement("div"); ps.className = "ps";
@@ -248,6 +256,7 @@ document.getElementById("send").onclick = function(){
       body: JSON.stringify({nombre:n, dormir:dormir, peliculas:chosen})}).catch(function(){});
   }
   window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg), "_blank");
+  
 };
 </script>
 </body>
