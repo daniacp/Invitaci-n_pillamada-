@@ -169,7 +169,7 @@ input[type=text]{width:100%;margin-top:6px;padding:12px 16px;border-radius:20px;
 
 <script>
 /* ============ CONFIGURACIÓN ============ */
-var WHATSAPP = "57322 8537880";   // 322 8537880 con el código de Colombia (57)
+var WHATSAPP = "573228537880";   // 322 8537880 con el código de Colombia (57)
 
 /* Base de datos (Google Sheets): pega aquí la URL que te da Apps Script.
    Mientras esté vacío, solo se abre el WhatsApp. */
@@ -240,22 +240,54 @@ function refresh(){
   count.textContent = chosen.length + " de 3 escogidas";
   document.getElementById("err").textContent = "";
 }
+document.getElementById("send").onclick = function () {
+  var n = document.getElementById("nombre").value.trim();
+  var err = document.getElementById("err");
 
-document.getElementById("send").onclick = function(){
-  var n = document.getElementById("nombre").value.trim(), err = document.getElementById("err");
-  if (!n){ err.textContent = "Escribe tu nombre para confirmar."; return; }
-  if (chosen.length < 3){ err.textContent = "Escoge 3 películas para confirmar."; return; }
-  var dormir = document.getElementById("dormir").checked ? "Sí, me quedo a dormir 🌙" : "No, solo voy a la pijamada";
-  var msg = "¡Hola! Soy " + n + " y confirmo mi asistencia a la pijamada del sábado 14 de noviembre 💗\n\n" +
-            "🎬 Mis películas: " + chosen.join(", ") + "\n" +
-            "🛏️ ¿Me quedo a dormir? " + dormir;
-  if (SHEET_URL){
-    fetch(SHEET_URL, {method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"},
-      body: JSON.stringify({nombre:n, dormir:dormir, peliculas:chosen})}).catch(function(){});
+  if (!n) {
+    err.textContent = "Escribe tu nombre para confirmar.";
+    return;
   }
-  window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg), "_blank");
-  
+
+  if (chosen.length < 3) {
+    err.textContent = "Escoge 3 películas para confirmar.";
+    return;
+  }
+
+  var dormir = document.getElementById("dormir").checked
+    ? "Sí, me quedo a dormir 🌙"
+    : "No, solo voy a la pijamada";
+
+  var msg =
+    "¡Hola! Soy " + n +
+    " y confirmo mi asistencia a la pijamada del sábado 14 de noviembre 💗\n\n" +
+    "🎬 Mis películas: " + chosen.join(", ") + "\n" +
+    "🛏️ ¿Me quedo a dormir? " + dormir;
+
+  if (SHEET_URL) {
+    fetch(SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify({
+        nombre: n,
+        dormir: dormir,
+        peliculas: chosen
+      })
+    }).catch(function(){});
+  }
+
+  var url =
+    "https://api.whatsapp.com/send?phone=" +
+    WHATSAPP +
+    "&text=" +
+    encodeURIComponent(msg);
+
+  window.location.href = url;
 };
+  var WHATSAPP = "573228537880";
 </script>
 </body>
 </html>
